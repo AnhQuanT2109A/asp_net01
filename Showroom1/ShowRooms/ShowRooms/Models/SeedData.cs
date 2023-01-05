@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ShowRooms.Data;
 using System;
 using System.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ShowRooms.Models
 {
@@ -24,6 +25,28 @@ namespace ShowRooms.Models
                     return;   // DB has been seeded
                 }
 
+
+                //category
+                var categorys = new Category[]
+                {
+                    new Category
+                    {
+                        Name = "Family"
+                    },
+                    new Category
+                    {
+                        Name = "Sport"
+                    },
+
+                 };
+                foreach (Category cate in categorys)
+                {
+                    context.Categorys.Add(cate);
+                }
+                context.SaveChanges();
+
+
+
                 // car
                 var cars = new Car[] {
                     new Car
@@ -38,7 +61,10 @@ namespace ShowRooms.Models
                           Top_speed = 248,
                           Interior_color = "black",
                           number_of_seat = 4,
-                          Price = 9000
+                          Price = 9000,
+                          CategoryID=categorys.Single(cate => cate.Name == "Family").Id,
+                          
+
                     },
                      new Car
                     {
@@ -52,7 +78,10 @@ namespace ShowRooms.Models
                           Top_speed = 248,
                           Interior_color = "black",
                           number_of_seat = 4,
-                          Price = 9000
+                          Price = 9000,
+                          CategoryID=categorys.Single(cate => cate.Name == "Sport").Id
+
+
                     }
                 };
                 foreach (Car ca in cars)
@@ -62,65 +91,60 @@ namespace ShowRooms.Models
                 }
                 context.SaveChanges();
 
-                //category
-                var categorys = new Category[]
-                {
-                    new Category
-                    {
-                        CarID = cars.Single(ca => ca.Fullname == "Car 1").Id,
-                        exterior_color ="black",
-                        work_productivity="200",
-                        cylinder_number=21,
-                    },
-                     new Category
-                    {
-                       CarID = cars.Single(ca => ca.Fullname == "Car 2").Id,
-                       exterior_color ="red",
-                       work_productivity="2199",
-                       cylinder_number=50
-                    }
-                 };
-                 foreach (Category cate in categorys)
-                       {
-                         context.Categorys.Add(cate);
-                    }
-                context.SaveChanges();
-
 
                 var stores = new Store[]
-              {
+             {
                     new Store
                     {
-                        StoreID = cars.Single(ca => ca.Fullname == "Car 1").Id,
-                        Service = "Advanced service",
-
+                       Name = "Ha Noi"
                     },
                     new Store
                     {
-                        StoreID = cars.Single(ca => ca.Fullname == "Car 2").Id,
-                        Service = "Basic service"
+                        Name = "Sai Gon"
                     },
-              };
+             };
                 foreach (Store sto in stores)
                 {
                     context.Stores.Add(sto);
                 }
                 context.SaveChanges();
 
+                //car_store
+                var car_stores = new Car_store[]
+                    {
+                       new Car_store
+                       {
+                          CarID = cars.Single(ca => ca.Fullname == "Car 1").Id,
+                         StoreID = stores.Single(sto => sto.Name == "Sai Gon").ID
+
+
+                     },
+                      new Car_store
+                      {
+                          CarID = cars.Single(ca => ca.Fullname == "Car 2").Id,
+                          StoreID = stores.Single(sto => sto.Name == "Sai Gon").ID
+
+                     },
+                };
+                foreach (Car_store Car_ in car_stores)
+                {
+                    context.Car_stores.Add(Car_);
+                }
+                //context.SaveChanges();
+
+               
 
                 // service
                 var services = new Service[]
                 {
                     new Service
                     {
-                       StoreID=stores.Single(sto => sto.Service == "Advanced service").ID,
                        inurance="1 year",
                        aotomotive_parts="full option",
                        service_about_car="basic",
                     },
                      new Service
                     {
-                     StoreID=stores.Single(sto => sto.Service == "Basic service").ID,
                        inurance="2 year",
                        aotomotive_parts="no",
                        service_about_car="classic",
@@ -133,31 +157,13 @@ namespace ShowRooms.Models
                 context.SaveChanges();
 
            
-              //car_store
-                var car_stores = new Car_store[]
-                    {
-                       new Car_store
-                       {
-                          CarID = cars.Single(ca => ca.Fullname == "Car 1").Id,
-                          
-                     },
-                      new Car_store
-                      {
-                          CarID = cars.Single(ca => ca.Fullname == "Car 2").Id,
-                     },
-                };
-                 foreach (Car_store Car_ in car_stores)
-                       {
-                       context.Car_stores.Add(Car_);
-                  }
-                  context.SaveChanges();
+             
 
                 //contact
                 var contact = new Contact[]
                 {
                     new Contact
                     {
-                        StoreID = stores.Single(sto => sto.Service == "Advanced service").ID,
                         username = "John",
                         address="Usa",
                         phone="955234243",
@@ -166,7 +172,6 @@ namespace ShowRooms.Models
                     },
                     new Contact
                     {
-                        StoreID = stores.Single(sto => sto.Service == "Advanced service").ID,
                         username = "Tom",
                         address="Franch",
                         phone="955234243",

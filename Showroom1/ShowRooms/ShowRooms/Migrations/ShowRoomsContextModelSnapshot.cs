@@ -30,6 +30,9 @@ namespace ShowRooms.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CategoryID")
+                        .HasColumnType("int");
+
                     b.Property<string>("Fullname")
                         .HasColumnType("nvarchar(max)");
 
@@ -65,7 +68,9 @@ namespace ShowRooms.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Car", (string)null);
+                    b.HasIndex("CategoryID");
+
+                    b.ToTable("Car");
                 });
 
             modelBuilder.Entity("ShowRooms.Models.Car_store", b =>
@@ -88,7 +93,7 @@ namespace ShowRooms.Migrations
 
                     b.HasIndex("StoreID");
 
-                    b.ToTable("Car_store", (string)null);
+                    b.ToTable("Car_stores");
                 });
 
             modelBuilder.Entity("ShowRooms.Models.Category", b =>
@@ -99,27 +104,12 @@ namespace ShowRooms.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CarID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CarName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float?>("cylinder_number")
-                        .HasColumnType("real");
-
-                    b.Property<string>("exterior_color")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("work_productivity")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CarID")
-                        .IsUnique();
-
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Categorys");
                 });
 
             modelBuilder.Entity("ShowRooms.Models.Contact", b =>
@@ -150,10 +140,9 @@ namespace ShowRooms.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StoreID")
-                        .IsUnique();
+                    b.HasIndex("StoreID");
 
-                    b.ToTable("Contact", (string)null);
+                    b.ToTable("Contacts");
                 });
 
             modelBuilder.Entity("ShowRooms.Models.Service", b =>
@@ -178,10 +167,9 @@ namespace ShowRooms.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StoreID")
-                        .IsUnique();
+                    b.HasIndex("StoreID");
 
-                    b.ToTable("Service", (string)null);
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("ShowRooms.Models.Store", b =>
@@ -192,55 +180,47 @@ namespace ShowRooms.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("Contact")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Service")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StoreID")
-                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.ToTable("Store", (string)null);
+                    b.ToTable("Stores");
+                });
+
+            modelBuilder.Entity("ShowRooms.Models.Car", b =>
+                {
+                    b.HasOne("ShowRooms.Models.Category", "Category")
+                        .WithMany("Cars")
+                        .HasForeignKey("CategoryID");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("ShowRooms.Models.Car_store", b =>
                 {
-                    b.HasOne("ShowRooms.Models.Car", "Car")
+                    b.HasOne("ShowRooms.Models.Car", "Cars")
                         .WithMany("Car_stores")
                         .HasForeignKey("CarID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ShowRooms.Models.Store", "Store")
+                    b.HasOne("ShowRooms.Models.Store", "Stores")
                         .WithMany("Car_store")
                         .HasForeignKey("StoreID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Car");
+                    b.Navigation("Cars");
 
-                    b.Navigation("Store");
-                });
-
-            modelBuilder.Entity("ShowRooms.Models.Category", b =>
-                {
-                    b.HasOne("ShowRooms.Models.Car", "Car")
-                        .WithOne("Category")
-                        .HasForeignKey("ShowRooms.Models.Category", "CarID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Car");
+                    b.Navigation("Stores");
                 });
 
             modelBuilder.Entity("ShowRooms.Models.Contact", b =>
                 {
                     b.HasOne("ShowRooms.Models.Store", "Store")
-                        .WithOne("Contacts")
-                        .HasForeignKey("ShowRooms.Models.Contact", "StoreID")
+                        .WithMany()
+                        .HasForeignKey("StoreID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -250,8 +230,8 @@ namespace ShowRooms.Migrations
             modelBuilder.Entity("ShowRooms.Models.Service", b =>
                 {
                     b.HasOne("ShowRooms.Models.Store", "Store")
-                        .WithOne("Services")
-                        .HasForeignKey("ShowRooms.Models.Service", "StoreID")
+                        .WithMany()
+                        .HasForeignKey("StoreID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -261,17 +241,16 @@ namespace ShowRooms.Migrations
             modelBuilder.Entity("ShowRooms.Models.Car", b =>
                 {
                     b.Navigation("Car_stores");
+                });
 
-                    b.Navigation("Category");
+            modelBuilder.Entity("ShowRooms.Models.Category", b =>
+                {
+                    b.Navigation("Cars");
                 });
 
             modelBuilder.Entity("ShowRooms.Models.Store", b =>
                 {
                     b.Navigation("Car_store");
-
-                    b.Navigation("Contacts");
-
-                    b.Navigation("Services");
                 });
 #pragma warning restore 612, 618
         }

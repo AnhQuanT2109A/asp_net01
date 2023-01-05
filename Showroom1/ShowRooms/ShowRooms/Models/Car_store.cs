@@ -6,9 +6,11 @@
 
         public int CarID { get; set; }
         public int StoreID { get; set; }
+        
 
-        public Car? Car { get; set; }
+        public Car? Cars { get; set; }
 
-        public Store? Store { get; set; }
+
+        public Store? Stores { get; set; }
     }
 }
